@@ -1,0 +1,363 @@
+{
+  "info": {
+    "name": "Slooze Food Ordering API",
+    "description": "Complete API collection for Slooze food ordering backend. Includes Auth, Restaurants, Orders, and Payments with RBAC + country scoping.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000/api/v1", "type": "string" },
+    { "key": "adminToken", "value": "", "type": "string" },
+    { "key": "managerIndiaToken", "value": "", "type": "string" },
+    { "key": "managerAmericaToken", "value": "", "type": "string" },
+    { "key": "memberToken", "value": "", "type": "string" },
+    { "key": "restaurantId", "value": "", "type": "string" },
+    { "key": "menuItemId", "value": "", "type": "string" },
+    { "key": "orderId", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "🔐 Auth",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Iron Man\",\n  \"email\": \"iron.man@stark.com\",\n  \"password\": \"jarvis@123\",\n  \"role\": \"MEMBER\",\n  \"country\": \"America\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login - Nick Fury (ADMIN)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.token) {",
+                  "  pm.collectionVariables.set('adminToken', res.data.token);",
+                  "  console.log('Admin token saved');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"nick.fury@shield.com\",\n  \"password\": \"admin@123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login - Captain Marvel (MANAGER India)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.token) {",
+                  "  pm.collectionVariables.set('managerIndiaToken', res.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"captain.marvel@shield.com\",\n  \"password\": \"manager@123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login - Captain America (MANAGER America)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.token) {",
+                  "  pm.collectionVariables.set('managerAmericaToken', res.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"captain.america@shield.com\",\n  \"password\": \"manager@123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login - Thanos (MEMBER India)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.token) {",
+                  "  pm.collectionVariables.set('memberToken', res.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"thanos@shield.com\",\n  \"password\": \"member@123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Current User (me)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": { "raw": "{{baseUrl}}/auth/me", "host": ["{{baseUrl}}"], "path": ["auth", "me"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🍽️ Restaurants",
+      "item": [
+        {
+          "name": "Get All Restaurants (Admin - sees all)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": { "raw": "{{baseUrl}}/restaurants", "host": ["{{baseUrl}}"], "path": ["restaurants"] }
+          }
+        },
+        {
+          "name": "Get All Restaurants (India Manager - India only)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{managerIndiaToken}}" }],
+            "url": { "raw": "{{baseUrl}}/restaurants", "host": ["{{baseUrl}}"], "path": ["restaurants"] }
+          }
+        },
+        {
+          "name": "Get All Restaurants (America Manager - America only)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{managerAmericaToken}}" }],
+            "url": { "raw": "{{baseUrl}}/restaurants", "host": ["{{baseUrl}}"], "path": ["restaurants"] }
+          }
+        },
+        {
+          "name": "Get Restaurant by ID + Menu",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": { "raw": "{{baseUrl}}/restaurants/{{restaurantId}}", "host": ["{{baseUrl}}"], "path": ["restaurants", "{{restaurantId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📦 Orders",
+      "item": [
+        {
+          "name": "Get All Orders (country-scoped)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": { "raw": "{{baseUrl}}/orders", "host": ["{{baseUrl}}"], "path": ["orders"] }
+          }
+        },
+        {
+          "name": "Get Order by ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": { "raw": "{{baseUrl}}/orders/{{orderId}}", "host": ["{{baseUrl}}"], "path": ["orders", "{{orderId}}"] }
+          }
+        },
+        {
+          "name": "Create Order (ALL roles)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.order) {",
+                  "  pm.collectionVariables.set('orderId', res.data.order._id);",
+                  "  console.log('Order ID saved:', res.data.order._id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{managerIndiaToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/orders", "host": ["{{baseUrl}}"], "path": ["orders"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"restaurantId\": \"{{restaurantId}}\",\n  \"items\": [\n    { \"menuItemId\": \"{{menuItemId}}\", \"quantity\": 2 }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Place Order (ADMIN & MANAGER only)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{managerIndiaToken}}" }],
+            "url": { "raw": "{{baseUrl}}/orders/{{orderId}}/place", "host": ["{{baseUrl}}"], "path": ["orders", "{{orderId}}", "place"] }
+          }
+        },
+        {
+          "name": "Place Order - MEMBER (❌ Should return 403)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{memberToken}}" }],
+            "url": { "raw": "{{baseUrl}}/orders/{{orderId}}/place", "host": ["{{baseUrl}}"], "path": ["orders", "{{orderId}}", "place"] }
+          }
+        },
+        {
+          "name": "Cancel Order (ADMIN & MANAGER only)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{managerIndiaToken}}" }],
+            "url": { "raw": "{{baseUrl}}/orders/{{orderId}}/cancel", "host": ["{{baseUrl}}"], "path": ["orders", "{{orderId}}", "cancel"] }
+          }
+        },
+        {
+          "name": "Cancel Order - MEMBER (❌ Should return 403)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{memberToken}}" }],
+            "url": { "raw": "{{baseUrl}}/orders/{{orderId}}/cancel", "host": ["{{baseUrl}}"], "path": ["orders", "{{orderId}}", "cancel"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "💳 Payments",
+      "item": [
+        {
+          "name": "Get My Payment Methods",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": { "raw": "{{baseUrl}}/payments", "host": ["{{baseUrl}}"], "path": ["payments"] }
+          }
+        },
+        {
+          "name": "Add Payment Method (ADMIN only)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/payments", "host": ["{{baseUrl}}"], "path": ["payments"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"CARD\",\n  \"details\": {\n    \"cardLast4\": \"5678\",\n    \"cardBrand\": \"Visa\",\n    \"billingName\": \"Nick Fury\"\n  },\n  \"isDefault\": false\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Payment Method (ADMIN only)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/payments/update", "host": ["{{baseUrl}}"], "path": ["payments", "update"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"UPI\",\n  \"details\": {\n    \"upiId\": \"nickfury@upi\",\n    \"billingName\": \"Nick Fury\"\n  },\n  \"isDefault\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Payment - MANAGER (❌ Should return 403)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{managerIndiaToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/payments/update", "host": ["{{baseUrl}}"], "path": ["payments", "update"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"CARD\",\n  \"details\": { \"cardLast4\": \"1234\" },\n  \"isDefault\": true\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🌍 Country Scoping (BONUS)",
+      "item": [
+        {
+          "name": "India Manager sees India restaurants only",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{managerIndiaToken}}" }],
+            "url": { "raw": "{{baseUrl}}/restaurants", "host": ["{{baseUrl}}"], "path": ["restaurants"] }
+          }
+        },
+        {
+          "name": "America Manager sees America restaurants only",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{managerAmericaToken}}" }],
+            "url": { "raw": "{{baseUrl}}/restaurants", "host": ["{{baseUrl}}"], "path": ["restaurants"] }
+          }
+        },
+        {
+          "name": "Admin sees ALL restaurants",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": { "raw": "{{baseUrl}}/restaurants", "host": ["{{baseUrl}}"], "path": ["restaurants"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🏥 Health Check",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "http://localhost:5000/health", "host": ["http://localhost:5000"], "path": ["health"] }
+          }
+        }
+      ]
+    }
+  ]
+}

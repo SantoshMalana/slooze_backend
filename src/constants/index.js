@@ -1,0 +1,24 @@
+const ROLES = {
+  ADMIN: 'ADMIN',
+  MANAGER: 'MANAGER',
+  MEMBER: 'MEMBER',
+};
+
+const COUNTRIES = {
+  INDIA: 'India',
+  AMERICA: 'America',
+};
+
+const ORDER_STATUS = {
+  CREATED: 'CREATED',
+  PLACED: 'PLACED',
+  CANCELLED: 'CANCELLED',
+};
+
+const PAYMENT_METHODS = {
+  CARD: 'CARD',
+  UPI: 'UPI',
+  CASH: 'CASH',
+};
+
+module.exports = { ROLES, COUNTRIES, ORDER_STATUS, PAYMENT_METHODS };
